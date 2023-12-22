@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  bitcoin-core:
+    extends:
+      file: ./bitcoin-core/docker-compose.yml
+      service: bitcoin-core
+    networks:
+      - bitcoin
+
+  bitcoin-node-manager:
+    extends:
+      file: ./bitcoin-node-manager/docker-compose.yml
+      service: bitcoin-node-manager
+    networks:
+      - bitcoin
+
+networks:
+  bitcoin:
+    name: bitcoin
+    driver: bridge

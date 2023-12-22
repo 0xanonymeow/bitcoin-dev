@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  bitcoin-node-manager:
+    image: php:8.2-apache
+    container_name: bitcoin-node-manager
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - bitcoin
