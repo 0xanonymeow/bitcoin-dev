@@ -4,7 +4,7 @@ services:
     image: cryptodockerhub/bitcoin-core:latest
     container_name: bitcoin-core
     ports:
-      - 18443:18443
+      - ${RPC_PORT}:${RPC_PORT}
     volumes:
       - ./bitcoin-${CHAIN}.conf:/data/config.conf
     env_file:

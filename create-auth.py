@@ -108,7 +108,7 @@ def main():
     if chain == "main":
         port = 8332
     elif chain == "test":
-        port = 18332
+        port = 18333
     elif chain == "regtest":
         port = 18443
 
