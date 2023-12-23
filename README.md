@@ -5,8 +5,10 @@
 1. Duplicate the `.env.example` file and name it `.env` then update the `CHAIN` variable to your desired value. Example: `CHAIN=main`
 2. Run `chmod +x create-auth.py create-wallet.sh` to make the scripts executable.
 3. Run the `./create-auth.py your_username your_password` command to create authentication.
-4. Run `docker compose up -d` to start the necessary containers.
+4. Run `docker compose up bitcoin-core -d` to start the daemon.
 5. Run the `./create-wallet.sh` command to create a wallet.
+6. Run `source .env` then `./cmd.sh generatetoaddress 250 $WALLET_ADDRESS` to generate some blocks.
+7. Run `docker compose up bfgminer -d` to start the miner.
 
 ### Optional: Initialize with Default Values
 

@@ -46,7 +46,7 @@ def password_to_hmac(salt, password):
     m = hmac.new(salt.encode('utf-8'), password.encode('utf-8'), 'SHA256')
     return m.hexdigest()
 
-def update_conf_file():
+def update_bitcoin_core_conf_file():
     username = os.getenv("RPC_USER")
     password = os.getenv("RPC_PASSWORD")
     chain = os.getenv("CHAIN")
@@ -61,6 +61,27 @@ def update_conf_file():
     password_hmac = password_to_hmac(salt, password)
 
     conf_content = re.sub(rpc_auth_pattern, f'rpcauth={username}:{salt}${password_hmac}', conf_content)
+
+    with open(file_path, 'w') as file:
+        file.write(conf_content)
+
+def update_bfgminer_conf_file():
+    username = os.getenv("RPC_USER")
+    password = os.getenv("RPC_PASSWORD")
+    port = os.getenv("RPC_PORT")
+    file_path = f'bfgminer/bfgminer.conf'
+
+    with open(file_path, 'r') as file:
+        conf_content = file.read()
+
+    url_pattern = r'"url":\s*".*",'
+    user_pattern = r'"user":\s*".*",'
+    pass_pattern = r'"pass":\s*".*"'
+
+    # Perform substitutions
+    conf_content = re.sub(url_pattern, f'"url": "http://bitcoin-core:{port}",', conf_content)
+    conf_content = re.sub(user_pattern, f'"user": "{username}",', conf_content)
+    conf_content = re.sub(pass_pattern, f'"pass": "{password}"', conf_content)
 
     with open(file_path, 'w') as file:
         file.write(conf_content)
@@ -98,10 +119,6 @@ def main():
     elif args.password == '-':
         args.password = getpass()
 
-    # create 16 byte hex salt
-    salt = generate_salt(16)
-    password_hmac = password_to_hmac(salt, args.password)
-
     chain = os.getenv("CHAIN")
     port = 0
 
@@ -116,7 +133,7 @@ def main():
         "CHAIN": chain,
         "RPC_PORT": port,
         "RPC_USER": args.username,
-        "RPC_PASSWORD": password_hmac,
+        "RPC_PASSWORD": args.password,
     }
 
     for key, value in env_data.items():
@@ -124,11 +141,14 @@ def main():
 
     write_env(env_dict=env_data)
 
-    update_conf_file()
+    update_bitcoin_core_conf_file()
     print(f'bitcoin.conf updated with new rpcauth for user "{args.username}"')
 
     update_config_file()
     print(f'Config.php updated with new RPC_USER and RPC_PASSWORD for user "{args.username}"')
+
+    update_bfgminer_conf_file()
+    print(f'bfgminer.conf updated with new pool for "http://bitcoin-core:{port}"')
 
 if __name__ == '__main__':
     main()

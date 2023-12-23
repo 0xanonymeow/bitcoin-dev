@@ -14,7 +14,8 @@ CMD=$1
 shift 
 
 if [ $# -gt 0 ]; then
-    docker exec -it "${CONTAINER_NAME}" bash -c "bitcoin-cli ${AUTH_ARGS} ${CMD} $@"
+    ARGS="$@"
+    docker exec "${CONTAINER_NAME}" bash -c "bitcoin-cli ${AUTH_ARGS} ${CMD} ${ARGS}"
 else
-    docker exec -it "${CONTAINER_NAME}" bash -c "bitcoin-cli ${AUTH_ARGS} ${CMD}"
+    docker exec "${CONTAINER_NAME}" bash -c "bitcoin-cli ${AUTH_ARGS} ${CMD}"
 fi

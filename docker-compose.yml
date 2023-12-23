@@ -15,6 +15,13 @@ services:
     networks:
       - bitcoin
 
+  bfgminer:
+    extends:
+      file: ./bfgminer/docker-compose.yml
+      service: bfgminer
+    networks:
+      - bitcoin
+
 networks:
   bitcoin:
     name: bitcoin
