@@ -156,7 +156,8 @@ class jsonRPCClient
         }
 
         if ($this->error) {
-          throw new \Exception($this->error, $this->errorCode);
+            $errorCode = $this->errorCode ?? 0; // Set to 0 if $this->errorCode is null
+            throw new \Exception($this->error, $errorCode);
         }
 
         return $this->response['result'];
