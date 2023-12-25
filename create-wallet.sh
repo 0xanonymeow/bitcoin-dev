@@ -25,7 +25,7 @@ fi
 
 # execute the command to get a new address from the created wallet
 WALLET_ADDRESS=$(docker exec ${CONTAINER_NAME} bash -c "${CREATE_WALLET_ADDRESS}" 2>&1)
-echo $WALLET_ADDRESS
+
 # check if there are any errors in the wallet address output
 if [[ "$WALLET_ADDRESS" == *"Error"* ]]; then
     echo "error: failed to get wallet address."
