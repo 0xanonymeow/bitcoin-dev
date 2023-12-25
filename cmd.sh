@@ -4,6 +4,7 @@ if [ -f .env ]; then
     source .env
 else
     echo "error: .env file not found."
+    exit 1
 fi
 
 CONTAINER_NAME=bitcoin-core

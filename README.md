@@ -7,8 +7,8 @@
 3. Run the `./create-auth.py your_username your_password` command to create authentication.
 4. Run `docker compose up bitcoin-core -d` to start the daemon.
 5. Run the `./create-wallet.sh` command to create a wallet.
-6. Run `source .env` then `./cmd.sh generatetoaddress 250 $WALLET_ADDRESS` to generate some blocks.
-7. Run `docker compose up bfgminer -d` to start the miner.
+   5.1. (regtest only) Run `source .env` then `./cmd.sh generatetoaddress 250 $WALLET_ADDRESS` to generate some blocks.
+6. Run `docker compose up bfgminer -d` to start the miner.
 
 ### Optional: Initialize with Default Values
 
