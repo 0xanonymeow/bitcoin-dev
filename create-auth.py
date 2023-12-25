@@ -120,6 +120,8 @@ def main():
         args.password = getpass()
 
     chain = os.getenv("CHAIN")
+    dnsseed = os.getenv("DNSSEED")
+    fixedseeds = os.getenv("FIXEDSEEDS")
     port = 0
 
     if chain == "main":
@@ -134,6 +136,8 @@ def main():
         "RPC_PORT": port,
         "RPC_USER": args.username,
         "RPC_PASSWORD": args.password,
+        "DNSSEED": dnsseed or 1,
+        "FIXEDSEEDS": fixedseeds or 1,
     }
 
     for key, value in env_data.items():

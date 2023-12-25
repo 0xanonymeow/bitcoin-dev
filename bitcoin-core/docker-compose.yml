@@ -9,5 +9,6 @@ services:
       - ./bitcoin-${CHAIN}.conf:/data/config.conf
     env_file:
       - ../.env
+    command: bitcoind -conf=/data/config.conf -printtoconsole -dnsseed=${DNSSEED:-1} -fixedseeds=${FIXEDSEEDS:-1}
     networks:
       - bitcoin
