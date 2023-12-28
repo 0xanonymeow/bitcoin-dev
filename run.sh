@@ -1,16 +1,39 @@
 #!/bin/bash
 
-if [ -f .env ]; then
-    source .env
-else
-    echo "error: .env file not found."
-    exit 1
+# check if the .env file already exists
+if [ ! -e  ".env" ]; then
+    # copy the contents of the source file to the destination file
+    cp ".env.example" ".env"
+    echo ".env is created"
 fi
+
+if [[ "$#" -gt 0 && "$@" =~ "-n" ]]; then
+        value="0"
+    else
+        value="1"
+fi
+
+for key in "DNSSEED" "FIXEDSEEDS"; do
+    # check if the key already exists in the .env file
+    if grep -q "^$key=" .env; then
+        # update the existing key with the new value
+        if sed --version 2>&1 | grep -q "GNU"; then
+            sed -i 's/^'"$key"'=.*/'"$key=$value"'/' .env
+        else
+            sed -i "" 's/^'"$key"'=.*/'"$key=$value"'/' .env
+        fi
+    else
+        # append the new key-value pair to the .env file
+        echo "$key=$value" >> .env
+    fi
+done
+
+echo "updated DNSSEED and FIXEDSEEDS in .env file."
 
 # step 1: rake scripts executable
 chmod +x create-auth.py create-wallet.sh
 # step 2: run create-auth.py
-if [ -z "${RPC_PASSWORD:-}" ]; then
+if [[ "$#" -eq 0 || ! "$@" =~ "-k" ]]; then
     ./create-auth.py
 fi
 

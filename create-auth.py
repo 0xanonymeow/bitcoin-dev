@@ -3,16 +3,13 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-# Usage: ./create-ath.py your_username your_password
+# Usage: ./create-auth.py your_username your_password
 
 from argparse import ArgumentParser
 from getpass import getpass
 from secrets import token_hex, token_urlsafe
 from configparser import ConfigParser
 import hmac
-import base64
-import fileinput
-import sys
 import re
 import os
 
@@ -86,22 +83,41 @@ def update_bfgminer_conf_file():
     with open(file_path, 'w') as file:
         file.write(conf_content)
 
-def update_config_file():
-    username = os.getenv("RPC_USER")
-    password = os.getenv("RPC_PASSWORD")
-    port = os.getenv("RPC_PORT")
+def update_config_file(file_path='bitcoin-node-manager/src/Config.php'):
+    # check if the file exists
+    if not os.path.exists(file_path):
+        source_file_path = 'bitcoin-node-manager/src/Config.sample.php'
+
+        # open the source file for reading
+        with open(source_file_path, 'r') as source_file:
+            # read the content of the source file
+            file_content = source_file.read()
+
+        # Open the destination file for writing
+        with open(file_path, 'w') as destination_file:
+            # write the content to the destination file
+            destination_file.write(file_content)
+
+    rpc_username = os.getenv("RPC_USER")
+    rpc_password = os.getenv("RPC_PASSWORD")
+    rpc_port = os.getenv("RPC_PORT")
     file_path = 'bitcoin-node-manager/src/Config.php'
 
     with open(file_path, 'r') as file:
         config_content = file.read()
 
-    user_pattern = r'const\s+RPC_USER\s*=\s*".*";'
-    password_pattern = r'const\s+RPC_PASSWORD\s*=\s*".*";'
-    port_pattern = r'const\s+RPC_PORT\s*=\s*".*";'
 
-    config_content = re.sub(user_pattern, f'const RPC_USER = "{username}";', config_content)
-    config_content = re.sub(password_pattern, f'const RPC_PASSWORD = "{password}";', config_content)
-    config_content = re.sub(port_pattern, f'const RPC_PORT = "{port}";', config_content)
+    password_pattern = r'const\s+PASSWORD\s*=\s*".*";'
+    rpc_ip_pattern = r'const\s+RPC_IP\s*=\s*".*";'
+    rpc_user_pattern = r'const\s+RPC_USER\s*=\s*".*";'
+    rpc_password_pattern = r'const\s+RPC_PASSWORD\s*=\s*".*";'
+    rpc_port_pattern = r'const\s+RPC_PORT\s*=\s*".*";'
+
+    config_content = re.sub(password_pattern, f'const PASSWORD = "";', config_content)
+    config_content = re.sub(rpc_ip_pattern, f'const RPC_IP = "bitcoin-core";', config_content)
+    config_content = re.sub(rpc_user_pattern, f'const RPC_USER = "{rpc_username}";', config_content)
+    config_content = re.sub(rpc_password_pattern, f'const RPC_PASSWORD = "{rpc_password}";', config_content)
+    config_content = re.sub(rpc_port_pattern, f'const RPC_PORT = "{rpc_port}";', config_content)
 
     with open(file_path, 'w') as file:
         file.write(config_content)
@@ -149,7 +165,7 @@ def main():
     print(f'bitcoin.conf updated with new rpcauth for user "{args.username}"')
 
     update_config_file()
-    print(f'Config.php updated with new RPC_USER and RPC_PASSWORD for user "{args.username}"')
+    print(f'Config.php updated with new PASSWORD, RPC_IP, RPC_USER, and RPC_PASSWORD for user "{args.username}"')
 
     update_bfgminer_conf_file()
     print(f'bfgminer.conf updated with new pool for "http://bitcoin-core:{port}"')

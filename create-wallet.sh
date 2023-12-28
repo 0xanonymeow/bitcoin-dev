@@ -10,6 +10,7 @@ fi
 CONTAINER_NAME=bitcoin-core
 AUTH_ARGS="-chain=${CHAIN} -rpcuser=${RPC_USER} -rpcpassword=${RPC_PASSWORD} -rpcport=${RPC_PORT}"
 WALLET_NAME=${RPC_USER}
+
 # command to create a new wallet
 CREATE_WALLET_CMD="bitcoin-cli ${AUTH_ARGS} createwallet ${WALLET_NAME}"
 CREATE_WALLET_ADDRESS="bitcoin-cli ${AUTH_ARGS} -rpcwallet=${RPC_USER} getnewaddress -addresstype legacy"
